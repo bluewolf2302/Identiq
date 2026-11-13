@@ -6,9 +6,7 @@ import {
 } from "./types";
 
 export const GUIDELINE_COLLECTIONS = [
-  "Aura Botanicals Global v2.4",
-  "Northstar Pay Compliance v1.8",
-  "Solstice Packaging Standards v3.0",
+  "Teralune Brand Identity & AI Guidelines v1.0",
 ];
 
 export const INITIAL_REVIEWS: ReviewSubmission[] = [
