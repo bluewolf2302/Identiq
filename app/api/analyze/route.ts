@@ -1,20 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAnalysisOrchestrator } from "@/lib/analysis/composition-root";
-import { handleAnalysisRequest } from "@/lib/analysis/api-handler";
+import { analyzeSubmission } from "@/lib/ai/analyzer";
+import { AnalysisRequestPayload } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
-  let body: unknown;
   try {
-    body = await req.json();
-  } catch {
+    const body = (await req.json()) as Partial<AnalysisRequestPayload>;
+
+    if (!body.title?.trim() || !body.textContent?.trim()) {
+      return NextResponse.json(
+        { error: "Submission title and copy content are required for governance review." },
+        { status: 400 }
+      );
+    }
+
+    const payload: AnalysisRequestPayload = {
+      title: body.title.trim(),
+      contentType: body.contentType || "Campaign Copy",
+      guidelineCollection: body.guidelineCollection || "Aura Botanicals Global v2.4",
+      textContent: body.textContent.trim(),
+      assetName: body.assetName,
+      assetBase64: body.assetBase64,
+      assetMimeType: body.assetMimeType,
+      knowledgeSummary: Array.isArray(body.knowledgeSummary) ? body.knowledgeSummary : [],
+    };
+
+    const result = await analyzeSubmission(payload);
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("[/api/analyze] Analysis error:", error);
     return NextResponse.json(
-      { error: "The analysis request body must be valid JSON." },
-      { status: 400 },
+      { error: "Unable to complete brand governance analysis." },
+      { status: 500 }
     );
   }
-
-  const result = await handleAnalysisRequest(body, {
-    orchestrator: createAnalysisOrchestrator(),
-  });
-  return NextResponse.json(result.body, { status: result.status });
 }

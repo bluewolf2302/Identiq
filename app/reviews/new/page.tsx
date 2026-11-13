@@ -30,12 +30,22 @@ const CONTENT_TYPES: ContentType[] = [
 
 const SAMPLE_DRAFTS = [
   {
-    label: "Teralune Advertisement (Governance Test)",
-    title: "Teralune Summer Refreshment Advertisement",
+    label: "Skincare Launch Draft (Mixed Claims)",
+    title: "Winter Barrier Renewal Campaign",
     contentType: "Campaign Copy" as ContentType,
-    collection: "Teralune Brand Identity & AI Guidelines v1.0",
-    copy: "TERALUNE® SPRING WATER | REFRESHMENT, NATURALLY. 50% OFF TODAY! The water that make you feel invincible!!! Our spring water keep you fresh and improves your immunity instantly. TERALUNE NATURAL SPRING WATER 500ml + CURES TIREDNESS + BOOSTS IMMUNITY + DETOX YOUR BODY SPECIAL PRICE ₹19 500ml BOTTLE BUY NOW!!! 100% PURE • CLINICALLY PROVEN • CARBON NEUTRAL Visit www.teralune.example for more information Refreshment, Naturally. | Limited time offer!!!",
-    assetName: "teralune-test-advertisement.pdf",
+    collection: "Aura Botanicals Global v2.4",
+    copy: "Introducing Winter Barrier Renewal Elixir — clinically proven to reverse aging overnight with 100% guaranteed results in 14 days. Now distributed across 42 countries in recyclable glass packaging.",
+    assetUrl: "/images/campaign_solstice_launch.jpg",
+    assetName: "solstice-serum-hero-4x3.jpg",
+  },
+  {
+    label: "Fintech Card Ad (Terminology Check)",
+    title: "Northstar Q4 Executive Card Promo",
+    contentType: "Social Creative" as ContentType,
+    collection: "Northstar Pay Compliance v1.8",
+    copy: "Upgrade to Northstar Black for instant unlimited global credit and 5% flat cashback on every corporate travel booking.",
+    assetUrl: "/images/campaign_northstar_card.jpg",
+    assetName: "northstar-obsidian-metal-card.jpg",
   },
 ];
 
@@ -95,7 +105,7 @@ export default function NewReviewPage() {
     setContentType(sample.contentType);
     setGuidelineCollection(sample.collection);
     setTextContent(sample.copy);
-    setAssetPreviewUrl(undefined);
+    setAssetPreviewUrl(sample.assetUrl);
     setAssetName(sample.assetName);
     setAssetBase64(undefined);
     setAssetMimeType("image/jpeg");
@@ -117,7 +127,6 @@ export default function NewReviewPage() {
     setIsSubmitting(true);
 
     try {
-      const submissionId = `submission-${crypto.randomUUID()}`;
       const approvedRules = knowledge
         .filter((k) => k.status === "Approved")
         .map((k) => `${k.title}: ${k.content}`);
@@ -130,7 +139,6 @@ export default function NewReviewPage() {
           contentType,
           guidelineCollection,
           textContent: textContent.trim(),
-          submissionId,
           assetName,
           assetBase64,
           assetMimeType,
@@ -145,7 +153,7 @@ export default function NewReviewPage() {
 
       const data = (await res.json()) as AnalysisResponsePayload;
       const themes: PastelTheme[] = ["pink", "peach", "lavender", "mint", "blue", "yellow"];
-      const newId = data.submissionId ?? submissionId;
+      const newId = `rev-${Date.now()}`;
 
       const newReview: ReviewSubmission = {
         id: newId,
@@ -164,8 +172,6 @@ export default function NewReviewPage() {
         findings: data.findings,
         pastelTheme: themes[Math.floor(Math.random() * themes.length)],
         providerUsed: data.providerUsed,
-        analysisStatus: data.analysisStatus ?? "COMPLETED",
-        analysisRunId: data.analysisRunId,
       };
 
       addReview(newReview);
