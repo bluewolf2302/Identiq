@@ -48,12 +48,17 @@ export function extractSourceReference(
   fallbackVersionId: string | undefined,
 ) {
   const source = value.match(
-    /\[Source:\s*(.+?)\s+\(([^;()[\]]+);\s*([^;()[\]]+)(?:;\s*(?:page\s+\d+|section\s+.+?))?\)\]/i,
+    /\[Source:\s*(.+?)\s+\(([^;()[\]]+);\s*([^;()[\]]+)(?:;\s*([^)]+))?\)\]/i,
   );
   if (!source && (!fallbackSourceId || !fallbackVersionId)) {
     return undefined;
   }
 
+  const details = source?.[4] ?? "";
+  const pageMatch = details.match(/\bpage\s+(\d+)\b/i);
+  const pageNumber = pageMatch ? Number(pageMatch[1]) : undefined;
+  const sectionMatch = details.match(/\bsection\s+(.+?)(?:,\s*page\s+\d+)?$/i);
+  const section = sectionMatch?.[1]?.trim();
   return {
     sourceId: source?.[2]?.trim() ?? fallbackSourceId!,
     sourceType: "approved_brand_knowledge",
@@ -61,5 +66,7 @@ export function extractSourceReference(
     ...(source?.[3]?.trim() ?? fallbackVersionId
       ? { versionId: source?.[3]?.trim() ?? fallbackVersionId }
       : {}),
+    ...(pageNumber ? { pageNumber } : {}),
+    ...(section ? { section } : {}),
   };
 }

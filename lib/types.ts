@@ -32,6 +32,9 @@ export interface ReviewFinding {
   resolved: boolean;
   editedCorrection?: string;
   comments: ReviewComment[];
+  evidenceReferences?: import("./contracts").EvidenceReference[];
+  sourceVersionIds?: string[];
+  location?: import("./contracts").FindingLocation;
 }
 
 export type ReviewStatus =
@@ -71,6 +74,8 @@ export interface ReviewSubmission {
   pastelTheme: PastelTheme;
   reviewerNotes?: string;
   providerUsed?: string;
+  analysisStatus?: "COMPLETED" | "PARTIAL" | "FAILED";
+  analysisRunId?: string;
 }
 
 export type KnowledgeSection =
@@ -136,6 +141,7 @@ export interface AnalysisRequestPayload {
   contentType: ContentType;
   guidelineCollection: string;
   textContent: string;
+  submissionId?: string;
   assetName?: string;
   assetBase64?: string;
   assetMimeType?: string;
@@ -144,7 +150,11 @@ export interface AnalysisRequestPayload {
 
 export interface AnalysisResponsePayload {
   complianceScore: number;
-  providerUsed: "openrouter" | "gemini" | "mock-development";
+  providerUsed: string;
   summary: string;
   findings: ReviewFinding[];
+  submissionId?: string;
+  analysisRunId?: string;
+  analysisStatus?: "COMPLETED" | "PARTIAL" | "FAILED";
+  fallbackUsed?: boolean;
 }

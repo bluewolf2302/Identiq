@@ -252,7 +252,7 @@ function comparableTokens(
   const expression =
     kind === "APPROVED_DATE"
       ? /\b\d{4}-\d{2}-\d{2}\b/g
-      : /(?:[$€£]\s?\d+(?:[,.]\d+)*|\b\d+(?:[,.]\d+)*\b)/g;
+      : /(?:[$€£₹]\s?\d+(?:[,.]\d+)*)/gu;
   return value.match(expression) ?? [];
 }
 

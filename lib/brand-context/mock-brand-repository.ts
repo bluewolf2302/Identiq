@@ -3,6 +3,7 @@ import type {
   BrandKnowledgeRecord,
 } from "./types";
 import type { BrandKnowledgeRepository } from "./repository";
+import { teraluneKnowledge } from "./teralune-brand-fixture";
 
 const SAMPLE_SOURCE = {
   sourceDocumentId: "mock-brand-guidelines-v1",
@@ -87,6 +88,7 @@ export class MockBrandKnowledgeRepository
   constructor(
     brands: ReadonlyMap<string, BrandKnowledgeRecord> = new Map([
       [sampleProfile.brandId, sampleKnowledge],
+      [teraluneKnowledge.profile.brandId, teraluneKnowledge],
     ]),
   ) {
     this.brands = brands;
@@ -100,3 +102,4 @@ export class MockBrandKnowledgeRepository
 }
 
 export { sampleKnowledge };
+export { teraluneKnowledge };
